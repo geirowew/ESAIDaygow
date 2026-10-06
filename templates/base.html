@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f2ec">
+    <title>{% block title %}AI Day{% endblock %} | ESAI Day</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="topbar">
+        <a class="wordmark" href="{{ url_for('home') }}" aria-label="AI Day #3 in EDT ES (by geirowe)">
+            <span>AI Day #3 in EDT ES <span class="wordmark-light">(by geirowe)</span></span>
+        </a>
+        <div class="topbar-date"><span class="status-dot" aria-hidden="true"></span> NOVEMBER 05, 2026</div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <span>Enterprise Solutions AI Day</span>
+        <span class="footer-year">A DAY TO THINK FORWARD <span aria-hidden="true">↗</span></span>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
