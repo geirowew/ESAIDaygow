@@ -49,6 +49,32 @@
     </div>
 </section>
 
+<section class="monday-section" aria-labelledby="monday-title">
+    <div class="monday-heading">
+        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> YOUR OWN COUNTDOWN</p>
+        <h2 id="monday-title">How many<br> Mondays until then?</h2>
+        <p class="monday-copy">Pick a future date and find out how many Mondays are left on the calendar.</p>
+    </div>
+    <div class="monday-tool">
+        <form class="monday-form" data-monday-form>
+            <label for="target-date">Your date</label>
+            <div class="date-entry">
+                <input id="target-date" name="target-date" type="date" required data-target-date>
+                <button type="submit">Count Mondays <span aria-hidden="true">↗</span></button>
+            </div>
+            <label class="retirement-option" for="retirement-date">
+                <input id="retirement-date" name="retirement-date" type="checkbox" data-retirement>
+                <span>This is my planned retirement date</span>
+            </label>
+        </form>
+        <div class="monday-result" data-monday-result role="status" aria-live="polite" hidden>
+            <span class="monday-result-number" data-monday-count></span>
+            <span class="monday-result-label" data-monday-label></span>
+            <p class="retirement-message" data-retirement-message hidden></p>
+        </div>
+    </div>
+</section>
+
 <section class="future-section" aria-labelledby="future-title">
     <div class="future-heading">
         <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> LOOKING AHEAD</p>
@@ -59,5 +85,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='monday-counter.js') }}" defer></script>
 <script src="{{ url_for('static', filename='countdown.js') }}" defer></script>
 {% endblock %}
