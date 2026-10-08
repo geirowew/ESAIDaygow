@@ -266,6 +266,36 @@ h1 span {
     color: var(--orange);
 }
 
+.future-section {
+    display: grid;
+    width: min(100%, 1120px);
+    margin: 0 auto;
+    padding: 48px 0 76px;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 8%;
+    border-top: 1px solid var(--line);
+}
+
+.future-heading .eyebrow {
+    margin-bottom: 19px;
+}
+
+.future-section h2 {
+    margin: 0;
+    font-size: clamp(38px, 4.5vw, 58px);
+    font-weight: 500;
+    line-height: 1;
+}
+
+.future-copy {
+    max-width: 560px;
+    margin: 0;
+    align-self: center;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.8;
+}
+
 .footer {
     min-height: 56px;
     border-top: 1px solid var(--line);
@@ -353,6 +383,16 @@ h1 span {
         grid-column: 1;
         gap: 9px;
         font-size: 9px;
+    }
+
+    .future-section {
+        padding: 42px 0 54px;
+        grid-template-columns: 1fr;
+        row-gap: 24px;
+    }
+
+    .future-copy {
+        font-size: 15px;
     }
 
     .footer {
