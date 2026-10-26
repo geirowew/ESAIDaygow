@@ -17,7 +17,7 @@
             <span>AI Day #3 in EDT ES <span class="wordmark-light">(by geirowe)</span></span>
         </a>
         <div class="topbar-actions">
-            <div class="topbar-date"><span class="status-dot" aria-hidden="true"></span> NOVEMBER 05, 2026</div>
+            <div class="topbar-date"><span class="status-dot" aria-hidden="true"></span> {{ ai_day.strftime('%B %d, %Y').upper() }}</div>
             {% if request.endpoint == "home" %}
             <a class="topbar-sap-link" href="{{ url_for('sap_production') }}" aria-label="Open SAP S/4HANA production access">
                 <img src="{{ url_for('static', filename='sap-logo.svg') }}" alt="" width="48" height="24">

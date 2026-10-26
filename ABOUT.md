@@ -9,6 +9,8 @@ ESAI Day er en liten Flask-basert nettside med nedtelling til Enterprise Solutio
 - Valgfri pensjonsdato med en liten kommentar om mandagsalarmer.
 - En kort tekst om framtidens koding.
 
+Tidspunktet for AI Day defineres av `AI_DAY` i `app.py`. Serveren og nettleseren bruker samme frist: 5. november 2026 kl. 00:00 UTC. Etter fristen viser nedtellingen null og meldingen "AI DAY IS HERE".
+
 ## Teknologi
 
 - Python og Flask

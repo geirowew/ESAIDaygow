@@ -13,18 +13,10 @@
         <p class="production-enabled">Enabled thru Nexus</p>
     </div>
     <div class="production-actions">
-        <a class="production-link" href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home">
-            Open SAP directly <span aria-hidden="true">↗</span>
+        <a class="production-link" href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home" target="_blank" rel="noopener noreferrer">
+            Home <span aria-hidden="true">↗</span>
         </a>
         <a class="production-back" href="{{ url_for('home') }}">← Back to countdown</a>
     </div>
-    <iframe
-        class="production-frame"
-        src="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home"
-        title="SAP S/4HANA production launchpad"
-        allow="clipboard-read; clipboard-write; fullscreen"
-        allowfullscreen>
-    </iframe>
-    <p class="production-frame-note">If SAP doesn't load here, use “Open SAP directly” above.</p>
 </section>
 {% endblock %}
