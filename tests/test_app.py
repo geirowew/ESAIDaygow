@@ -15,12 +15,13 @@ class HomepageTests(unittest.TestCase):
             b'<section class="overview-screen"',
             b"COUNTING DOWN TO AI DAY",
             b"LOOKING AHEAD",
-            b"Your production<br>workspace awaits.",
-            b'href="/sap-s4"',
-            b"View SAP access",
+            b'class="topbar-sap-link" href="/sap-s4"',
+            b"Open SAP S/4HANA production access",
+            b"S/4HANA</span>",
         ):
             with self.subTest(expected=expected):
                 self.assertIn(expected, response.data)
+        self.assertNotIn(b"Your production", response.data)
 
         countdown_position = response.data.index(b'class="countdown-page"')
         future_position = response.data.index(b'class="future-section"')
