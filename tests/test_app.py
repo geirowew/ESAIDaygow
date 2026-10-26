@@ -36,8 +36,11 @@ class HomepageTests(unittest.TestCase):
             b'alt="SAP logo"',
             b"S/4HANA</h1>",
             b"Enabled thru Nexus",
-            b'href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home"',
-            b"Home <span aria-hidden=\"true\">",
+            b'<iframe',
+            b'src="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home"',
+            b'title="SAP S/4HANA production launchpad"',
+            b"Open SAP directly",
+            b"If SAP doesn't load here",
             b"Back to countdown",
         ):
             with self.subTest(expected=expected):

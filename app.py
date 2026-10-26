@@ -6,15 +6,13 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    ai_day = date(2026, 11, 5)
+    ai_day = date(2026, 10, 5)
     days_remaining = (ai_day - date.today()).days
     return render_template("index.html", days_remaining=days_remaining)
-
 
 @app.route("/sap-s4")
 def sap_production():
     return render_template("sap-production.html")
-
 
 if __name__ == "__main__":
     app.run(debug=True)
