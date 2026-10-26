@@ -3,50 +3,60 @@
 {% block title %}Countdown{% endblock %}
 
 {% block content %}
-<section class="countdown-page" aria-labelledby="page-title">
-    <div class="intro">
-        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> THE NEXT BIG IDEA STARTS HERE</p>
-        <h1 id="page-title">A little closer<br>to <span>what’s next.</span></h1>
-        <p class="intro-copy">Enterprise Solutions AI Day is on its way.<br>We’ll see you on November 5.</p>
-    </div>
+<section class="overview-screen" aria-label="Countdown and the future of coding">
+    <section class="countdown-page" aria-labelledby="page-title">
+        <div class="intro">
+            <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> THE NEXT BIG IDEA STARTS HERE</p>
+            <h1 id="page-title">A little closer<br>to <span>what’s next.</span></h1>
+            <p class="intro-copy">Enterprise Solutions AI Day is on its way.<br>We’ll see you on November 5.</p>
+        </div>
 
-    <div class="countdown-panel" data-target="2026-11-05T00:00:00Z" role="timer" aria-label="Countdown to November 5, 2026">
-        <div class="panel-heading">
-            <span>COUNTING DOWN TO AI DAY</span>
-            <span class="live-indicator"><span aria-hidden="true"></span> LIVE</span>
+        <div class="countdown-panel" data-target="2026-11-05T00:00:00Z" role="timer" aria-label="Countdown to November 5, 2026">
+            <div class="panel-heading">
+                <span>COUNTING DOWN TO AI DAY</span>
+                <span class="live-indicator"><span aria-hidden="true"></span> LIVE</span>
+            </div>
+            <div class="units" aria-live="off">
+                <div class="unit">
+                    <span class="unit-value" data-unit="days">{{ '%02d'|format(days_remaining) }}</span>
+                    <span class="unit-label">DAYS</span>
+                </div>
+                <span class="separator" aria-hidden="true">:</span>
+                <div class="unit">
+                    <span class="unit-value" data-unit="hours">00</span>
+                    <span class="unit-label">HOURS</span>
+                </div>
+                <span class="separator" aria-hidden="true">:</span>
+                <div class="unit">
+                    <span class="unit-value" data-unit="minutes">00</span>
+                    <span class="unit-label">MINUTES</span>
+                </div>
+                <span class="separator" aria-hidden="true">:</span>
+                <div class="unit">
+                    <span class="unit-value" data-unit="seconds">00</span>
+                    <span class="unit-label">SECONDS</span>
+                </div>
+            </div>
+            <div class="panel-bottom">
+                <span>NOV 05 <span aria-hidden="true">/</span> 2026</span>
+                <span class="panel-message" data-message>THE FUTURE IS IN MOTION</span>
+            </div>
         </div>
-        <div class="units" aria-live="off">
-            <div class="unit">
-                <span class="unit-value" data-unit="days">{{ '%02d'|format(days_remaining) }}</span>
-                <span class="unit-label">DAYS</span>
-            </div>
-            <span class="separator" aria-hidden="true">:</span>
-            <div class="unit">
-                <span class="unit-value" data-unit="hours">00</span>
-                <span class="unit-label">HOURS</span>
-            </div>
-            <span class="separator" aria-hidden="true">:</span>
-            <div class="unit">
-                <span class="unit-value" data-unit="minutes">00</span>
-                <span class="unit-label">MINUTES</span>
-            </div>
-            <span class="separator" aria-hidden="true">:</span>
-            <div class="unit">
-                <span class="unit-value" data-unit="seconds">00</span>
-                <span class="unit-label">SECONDS</span>
-            </div>
-        </div>
-        <div class="panel-bottom">
-            <span>NOV 05 <span aria-hidden="true">/</span> 2026</span>
-            <span class="panel-message" data-message>THE FUTURE IS IN MOTION</span>
-        </div>
-    </div>
 
-    <div class="date-note">
-        <span class="date-note-label">MARK YOUR CALENDAR</span>
-        <span class="date-note-date">THURSDAY <span aria-hidden="true">·</span> NOV 05</span>
-        <span class="date-note-year">2026</span>
-    </div>
+        <div class="date-note">
+            <span class="date-note-label">MARK YOUR CALENDAR</span>
+            <span class="date-note-date">THURSDAY <span aria-hidden="true">·</span> NOV 05</span>
+            <span class="date-note-year">2026</span>
+        </div>
+    </section>
+
+    <section class="future-section" aria-labelledby="future-title">
+        <div class="future-heading">
+            <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> LOOKING AHEAD</p>
+            <h2 id="future-title">The future<br>of coding.</h2>
+        </div>
+        <p class="future-copy">As AI takes on more of the routine work of writing code, the craft of programming will move up a level. Developers will spend more time shaping ideas, setting clear constraints, and deciding whether a solution is useful, safe, and worth maintaining. The ability to read and reason about code will matter as much as producing it: the best tools can accelerate a team, but people still bring context, taste, and accountability. The future of coding is not less human; it is more focused on the questions only people can ask well.</p>
+    </section>
 </section>
 
 <section class="production-section" aria-labelledby="production-title">
@@ -61,14 +71,6 @@
     <a class="production-link" href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home">
         Home <span aria-hidden="true">↗</span>
     </a>
-</section>
-
-<section class="future-section" aria-labelledby="future-title">
-    <div class="future-heading">
-        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> LOOKING AHEAD</p>
-        <h2 id="future-title">The future<br>of coding.</h2>
-    </div>
-    <p class="future-copy">As AI takes on more of the routine work of writing code, the craft of programming will move up a level. Developers will spend more time shaping ideas, setting clear constraints, and deciding whether a solution is useful, safe, and worth maintaining. The ability to read and reason about code will matter as much as producing it: the best tools can accelerate a team, but people still bring context, taste, and accountability. The future of coding is not less human; it is more focused on the questions only people can ask well.</p>
 </section>
 {% endblock %}
 

@@ -12,6 +12,7 @@ class HomepageTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         for expected in (
+            b'<section class="overview-screen"',
             b"COUNTING DOWN TO AI DAY",
             b"SAP S/4HANA IN PRODUCTION",
             b"LOOKING AHEAD",
@@ -23,3 +24,9 @@ class HomepageTests(unittest.TestCase):
         ):
             with self.subTest(expected=expected):
                 self.assertIn(expected, response.data)
+
+        countdown_position = response.data.index(b'class="countdown-page"')
+        future_position = response.data.index(b'class="future-section"')
+        production_position = response.data.index(b'class="production-section"')
+        self.assertLess(countdown_position, future_position)
+        self.assertLess(future_position, production_position)
