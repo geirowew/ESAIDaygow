@@ -13,8 +13,11 @@ class HomepageTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         for expected in (
             b"COUNTING DOWN TO AI DAY",
-            b"SAP FIORI IN PRODUCTION",
+            b"SAP S/4HANA IN PRODUCTION",
             b"LOOKING AHEAD",
+            b'alt="SAP logo"',
+            b"S/4HANA</h2>",
+            b"Enabled thru Nexus",
             b'href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home"',
             b"Home <span aria-hidden=\"true\">",
         ):

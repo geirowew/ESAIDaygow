@@ -281,11 +281,45 @@ h1 span {
     margin-bottom: 19px;
 }
 
+.production-brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.production-brand img {
+    display: block;
+    width: 92px;
+    height: auto;
+}
+
 .production-section h2 {
     margin: 0;
     font-size: clamp(38px, 4.5vw, 58px);
     font-weight: 500;
     line-height: 1;
+}
+
+.production-enabled {
+    display: flex;
+    width: fit-content;
+    margin: 16px 0 0;
+    padding: 7px 11px;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+
+.production-enabled::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #687c37;
+    content: "";
 }
 
 .production-link {
