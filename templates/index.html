@@ -59,17 +59,13 @@
     </section>
 </section>
 
-<section class="production-section" aria-labelledby="production-title">
-    <div class="production-heading">
+<section class="production-promo" aria-labelledby="production-promo-title">
+    <div>
         <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> SAP S/4HANA IN PRODUCTION</p>
-        <div class="production-brand">
-            <img src="{{ url_for('static', filename='sap-logo.svg') }}" alt="SAP logo" width="112" height="55">
-            <h2 id="production-title">S/4HANA</h2>
-        </div>
-        <p class="production-enabled">Enabled thru Nexus</p>
+        <h2 id="production-promo-title">Your production<br>workspace awaits.</h2>
     </div>
-    <a class="production-link" href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home">
-        Home <span aria-hidden="true">↗</span>
+    <a class="production-link" href="{{ url_for('sap_production') }}">
+        View SAP access <span aria-hidden="true">↗</span>
     </a>
 </section>
 {% endblock %}

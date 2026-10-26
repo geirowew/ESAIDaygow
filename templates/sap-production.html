@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}SAP S/4HANA{% endblock %}
+
+{% block content %}
+<section class="production-section" aria-labelledby="production-title">
+    <div class="production-heading">
+        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> SAP S/4HANA IN PRODUCTION</p>
+        <div class="production-brand">
+            <img src="{{ url_for('static', filename='sap-logo.svg') }}" alt="SAP logo" width="112" height="55">
+            <h1 id="production-title">S/4HANA</h1>
+        </div>
+        <p class="production-enabled">Enabled thru Nexus</p>
+    </div>
+    <div class="production-actions">
+        <a class="production-link" href="https://p09-web.equinor.com/sap/bc/ui2/flp?sap-client=590&amp;sap-language=EN#Shell-home">
+            Home <span aria-hidden="true">↗</span>
+        </a>
+        <a class="production-back" href="{{ url_for('home') }}">← Back to countdown</a>
+    </div>
+</section>
+{% endblock %}
