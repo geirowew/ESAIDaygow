@@ -26,6 +26,10 @@ test("Play and Work are prominent accessible buttons on desktop and mobile", asy
             const link = page.getByRole("link", { name, exact: true });
             await expect(link).toHaveAttribute("href", href);
             await expect(link).toHaveCSS("background-color", background);
+            if (name === "Play") {
+                const headingColor = await page.locator("h1 span").evaluate((element) => getComputedStyle(element).color);
+                await expect(link).toHaveCSS("background-color", headingColor);
+            }
             await expect(link).toHaveCSS("color", color);
             await expect(link).toHaveCSS("font-size", "15px");
             const bounds = await link.boundingBox();

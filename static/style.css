@@ -5,6 +5,7 @@
     --muted: #68746c;
     --line: #d9ddd4;
     --green: #d7f36a;
+    --olive: #687c37;
     --orange: #ef6848;
     --display: "Space Grotesk", "Trebuchet MS", sans-serif;
     --mono: "DM Mono", "Courier New", monospace;
@@ -50,7 +51,7 @@ a {
     gap: 26px;
 }
 
-.topbar-sap-link {
+.topbar-link {
     display: inline-flex;
     min-height: 44px;
     align-items: center;
@@ -61,22 +62,16 @@ a {
     transition: opacity 160ms ease;
 }
 
-.topbar-sap-link:hover {
+.topbar-link:hover {
     opacity: 0.72;
 }
 
-.topbar-sap-link img {
-    display: block;
-    width: 38px;
-    height: auto;
-}
-
-.topbar-sap-arrow {
+.topbar-arrow {
     color: var(--orange);
     font-size: 15px;
 }
 
-.topbar-sap-link:focus-visible {
+.topbar-link:focus-visible {
     outline: 2px solid var(--orange);
     outline-offset: 4px;
 }
@@ -96,7 +91,7 @@ a {
 
 .topbar-button-play {
     color: #fff;
-    background: #687c37;
+    background: var(--olive);
 }
 
 .topbar-button-work {
@@ -104,7 +99,7 @@ a {
     background: var(--ink);
 }
 
-.topbar-button-work .topbar-sap-arrow {
+.topbar-button-work .topbar-arrow {
     color: var(--green);
 }
 
@@ -222,7 +217,7 @@ h1 {
 }
 
 h1 span {
-    color: #687c37;
+    color: var(--olive);
 }
 
 .intro-copy {
@@ -413,7 +408,7 @@ h1 span {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #687c37;
+    background: var(--olive);
     content: "";
 }
 
@@ -541,13 +536,9 @@ h1 span {
         gap: 15px;
     }
 
-    .topbar-sap-link {
+    .topbar-link {
         gap: 6px;
         font-size: 11px;
-    }
-
-    .topbar-sap-link img {
-        width: 32px;
     }
 
     .topbar-actions-home {

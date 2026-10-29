@@ -32,6 +32,18 @@ function message(text, tone = "") {
     feedback.dataset.tone = tone;
 }
 
+function showError(error) {
+    console.error("Chess puzzle error:", error);
+    failed = true;
+    engine.close();
+    byId("engine-status").textContent = "Unavailable";
+    message(`${error.message} Reload this page to retry.`, "error");
+}
+
+function formatMove(move) {
+    return `${move.before.split(" ")[5]}${move.color === "w" ? "." : "..."} ${move.san}`;
+}
+
 function controls() {
     const locked = busy || failed || Boolean(promotion);
     skill.disabled = locked;
@@ -47,6 +59,7 @@ function renderBoard() {
     const legal = selected ? game.moves({ square: selected, verbose: true }).map((move) => move.to) : [];
     const files = orientation === "w" ? "abcdefgh" : "hgfedcba";
     const ranks = orientation === "w" ? "87654321" : "12345678";
+    const inCheck = game.isCheck();
     const fragment = document.createDocumentFragment();
     for (const [row, rank] of [...ranks].entries()) {
         for (const [column, file] of [...files].entries()) {
@@ -62,7 +75,7 @@ function renderBoard() {
             button.classList.toggle("legal", legal.includes(square));
             button.classList.toggle("last-move", lastMove?.from === square || lastMove?.to === square);
             button.classList.toggle("hint-square", hinted === square);
-            const checked = game.isCheck() && piece?.type === "k" && piece.color === game.turn();
+            const checked = inCheck && piece?.type === "k" && piece.color === game.turn();
             button.classList.toggle("in-check", checked);
             button.disabled = busy || failed || complete || Boolean(promotion);
             button.setAttribute("aria-label", `${square}, ${piece ? `${piece.color === "w" ? "White" : "Black"} ${names[piece.type]}` : "empty"}${checked ? ", in check" : ""}${legal.includes(square) ? ", legal destination" : ""}`);
@@ -98,7 +111,7 @@ function render() {
     list.replaceChildren();
     for (const move of game.history({ verbose: true })) {
         const item = document.createElement("li");
-        item.textContent = `${move.before.split(" ")[5]}${move.color === "w" ? "." : "..."} ${move.san}`;
+        item.textContent = formatMove(move);
         list.append(item);
     }
 }
@@ -110,11 +123,7 @@ async function run(action) {
     try {
         await action();
     } catch (error) {
-        console.error("Chess puzzle error:", error);
-        failed = true;
-        engine.close();
-        byId("engine-status").textContent = "Unavailable";
-        message(`${error.message} Reload this page to retry.`, "error");
+        showError(error);
     } finally {
         busy = false;
         render();
@@ -174,7 +183,7 @@ async function playMove(move) {
     const played = candidate.move(move);
     message("Stockfish is checking your move...");
     let reply = null;
-    if (!candidate.isCheckmate() && !candidate.isGameOver()) {
+    if (!candidate.isGameOver()) {
         reply = await engine.analyse(candidate.fen());
     }
     if (!candidate.isCheckmate() && (!reply || !isWinningContinuation(reply, puzzle.moves - movesUsed - 1))) {
@@ -203,9 +212,9 @@ function chooseSquare(square) {
     if (selected === square) {
         selected = null;
     } else if (selected) {
-        const moves = game.moves({ square: selected, verbose: true }).filter((move) => move.to === square);
-        if (moves.length) {
-            if (moves.some((move) => move.promotion)) {
+        const move = game.moves({ square: selected, verbose: true }).find((move) => move.to === square);
+        if (move) {
+            if (move.promotion) {
                 promotion = { from: selected, to: square };
                 render();
                 byId("promotion").focus();
@@ -232,6 +241,35 @@ async function currentAnalysis() {
     return analysis;
 }
 
+async function showHint() {
+    assisted = true;
+    streak = 0;
+    const { bestMove } = await currentAnalysis();
+    const move = moveFromUci(bestMove);
+    hintCount++;
+    hinted = hintCount === 1 ? move.from : move.to;
+    message(hintCount === 1
+        ? `Look at the piece on ${move.from}.`
+        : `Try ${move.from} to ${move.to}${move.promotion ? `, promoting to ${names[move.promotion]}` : ""}.`);
+}
+
+async function showSolution() {
+    assisted = true;
+    streak = 0;
+    const result = await currentAnalysis();
+    const line = new Chess(game.fen());
+    const moves = [];
+    for (const uci of result.pv) {
+        moves.push(formatMove(line.move(moveFromUci(uci))));
+        if (line.isCheckmate()) break;
+    }
+    if (!line.isCheckmate()) throw new Error("Stockfish returned an incomplete solution.");
+    complete = true;
+    byId("solution-line").textContent = `Solution from this position: ${moves.join(" ")}`;
+    byId("solution-line").hidden = false;
+    message("Solution revealed below. Start over to practise it, or try the next puzzle.");
+}
+
 board.addEventListener("click", (event) => {
     const square = event.target.closest("[data-square]")?.dataset.square;
     if (square) chooseSquare(square);
@@ -254,32 +292,8 @@ byId("confirm-promotion").addEventListener("click", () => {
     const move = { ...promotion, promotion: byId("promotion").value };
     void run(() => playMove(move));
 });
-byId("hint").addEventListener("click", () => void run(async () => {
-    assisted = true;
-    streak = 0;
-    const result = await currentAnalysis();
-    hintCount++;
-    hinted = hintCount === 1 ? result.bestMove.slice(0, 2) : result.bestMove.slice(2, 4);
-    message(hintCount === 1 ? `Look at the piece on ${hinted}.` : `Try ${result.bestMove.slice(0, 2)} to ${result.bestMove.slice(2, 4)}${result.bestMove[4] ? `, promoting to ${names[result.bestMove[4]]}` : ""}.`);
-}));
-byId("show-solution").addEventListener("click", () => void run(async () => {
-    assisted = true;
-    streak = 0;
-    const result = await currentAnalysis();
-    const line = new Chess(game.fen());
-    const moves = [];
-    for (const uci of result.pv) {
-        const number = line.moveNumber();
-        const color = line.turn();
-        moves.push(`${number}${color === "w" ? "." : "..."} ${line.move(moveFromUci(uci)).san}`);
-        if (line.isCheckmate()) break;
-    }
-    if (!line.isCheckmate()) throw new Error("Stockfish returned an incomplete solution.");
-    complete = true;
-    byId("solution-line").textContent = `Solution from this position: ${moves.join(" ")}`;
-    byId("solution-line").hidden = false;
-    message("Solution revealed below. Start over to practise it, or try the next puzzle.");
-}));
+byId("hint").addEventListener("click", () => void run(showHint));
+byId("show-solution").addEventListener("click", () => void run(showSolution));
 window.addEventListener("pagehide", (event) => {
     if (!event.persisted) engine.close();
 });
@@ -290,11 +304,7 @@ try {
     byId("engine-status").textContent = "Stockfish ready";
     startPuzzle();
 } catch (error) {
-    console.error("Stockfish startup failed:", error);
-    failed = true;
     busy = false;
-    engine.close();
-    byId("engine-status").textContent = "Unavailable";
-    message(error.message, "error");
+    showError(error);
     render();
 }

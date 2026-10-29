@@ -56,6 +56,12 @@ markert felt. Motoren godtar også alternative trekk som beholder tvungen matt
 innen oppgavens trekkgrense. Hint og løsninger teller ikke som løst alene.
 Fremdrift gjelder denne sidevisningen; det er ingen konto eller rating.
 
+Sjakkoden er delt i oppgavedata (`static/chess-puzzles.mjs`),
+motorprotokoll (`static/chess-engine.mjs`) og sideinteraksjon
+(`static/chess-page.mjs`). Hint og løsningsvisning bruker samme analysebuffer;
+oppstart og spilling bruker felles feilhåndtering. Navigasjonsknappene og
+overskriftens olivengrønne farge styres av `--olive` i `static/style.css`.
+
 Stockfish.js distribueres uendret under GPL-3.0. Lisensen serveres sammen med
 motoren; tilhørende kildekode og byggeinstruksjoner finnes i
 [Stockfish.js 17.1](https://github.com/nmrugg/stockfish.js/tree/602fd7e1a571a2be71f242942db90483731f2a1f).

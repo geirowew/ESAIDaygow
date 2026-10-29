@@ -21,8 +21,8 @@ class HomepageTests(unittest.TestCase):
             b"THURSDAY",
             b"NOV 05",
             b"LOOKING AHEAD",
-            b'class="topbar-sap-link topbar-button topbar-button-play" href="/chess">Play</a>',
-            b'class="topbar-sap-link topbar-button topbar-button-work" href="/sap-s4"',
+            b'class="topbar-link topbar-button topbar-button-play" href="/chess">Play</a>',
+            b'class="topbar-link topbar-button topbar-button-work" href="/sap-s4"',
             b"<span>Work</span>",
         ):
             with self.subTest(expected=expected):

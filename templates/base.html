@@ -16,13 +16,14 @@
         <a class="wordmark" href="{{ url_for('home') }}" aria-label="AI Day #3 in EDT ES (by geirowe)">
             <span>AI Day #3 in EDT ES <span class="wordmark-light">(by geirowe)</span></span>
         </a>
-        <div class="topbar-actions{% if request.endpoint == 'home' %} topbar-actions-home{% endif %}">
+        {% set is_home = request.endpoint == "home" %}
+        <div class="topbar-actions{% if is_home %} topbar-actions-home{% endif %}">
             <div class="topbar-date"><span class="status-dot" aria-hidden="true"></span> {{ ai_day.strftime('%B %d, %Y').upper() }}</div>
-            <a class="topbar-sap-link{% if request.endpoint == 'home' %} topbar-button topbar-button-play{% endif %}" href="{{ url_for('chess_puzzles') }}"{% if request.endpoint == "chess_puzzles" %} aria-current="page"{% endif %}>{% if request.endpoint == "home" %}Play{% else %}Chess puzzles{% endif %}</a>
-            {% if request.endpoint == "home" %}
-            <a class="topbar-sap-link topbar-button topbar-button-work" href="{{ url_for('sap_production') }}">
+            <a class="topbar-link{% if is_home %} topbar-button topbar-button-play{% endif %}" href="{{ url_for('chess_puzzles') }}"{% if request.endpoint == "chess_puzzles" %} aria-current="page"{% endif %}>{% if is_home %}Play{% else %}Chess puzzles{% endif %}</a>
+            {% if is_home %}
+            <a class="topbar-link topbar-button topbar-button-work" href="{{ url_for('sap_production') }}">
                 <span>Work</span>
-                <span class="topbar-sap-arrow" aria-hidden="true">↗</span>
+                <span class="topbar-arrow" aria-hidden="true">↗</span>
             </a>
             {% endif %}
         </div>
