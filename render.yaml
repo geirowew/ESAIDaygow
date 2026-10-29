@@ -2,6 +2,6 @@ services:
   - type: web
     name: esai-daygow
     runtime: python
-    buildCommand: pip install -r requirements.txt && npm ci && npm run build
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     healthCheckPath: /

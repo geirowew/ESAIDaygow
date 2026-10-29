@@ -21,9 +21,9 @@ class HomepageTests(unittest.TestCase):
             b"THURSDAY",
             b"NOV 05",
             b"LOOKING AHEAD",
+            b'class="topbar-sap-link" href="/chess">Play</a>',
             b'class="topbar-sap-link" href="/sap-s4"',
-            b"Open SAP S/4HANA production access",
-            b"S/4HANA</span>",
+            b"<span>Work</span>",
         ):
             with self.subTest(expected=expected):
                 self.assertIn(expected, response.data)
@@ -84,6 +84,16 @@ class HomepageTests(unittest.TestCase):
                 try:
                     self.assertEqual(response.status_code, 200)
                     self.assertIn(content_type, response.content_type)
+                finally:
+                    response.close()
+
+    def test_chess_modules_are_served_as_javascript(self):
+        for filename in ("chess-page.mjs", "chess-engine.mjs", "chess-puzzles.mjs"):
+            with self.subTest(filename=filename):
+                response = self.client.get(f"/static/{filename}")
+                try:
+                    self.assertEqual(response.status_code, 200)
+                    self.assertIn("javascript", response.content_type)
                 finally:
                     response.close()
 

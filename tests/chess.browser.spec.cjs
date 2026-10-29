@@ -17,7 +17,8 @@ async function hintMove(page) {
 
 test("home navigation, keyboard solve, retry and flip", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: "Chess puzzles" }).click();
+    await expect(page.getByRole("link", { name: "Work", exact: true })).toHaveAttribute("href", "/sap-s4");
+    await page.getByRole("link", { name: "Play", exact: true }).click();
     await expect(page.locator("#engine-status")).toHaveText("Stockfish ready");
     const firstSquare = await page.locator("#chess-board button").first().getAttribute("data-square");
     await page.getByRole("button", { name: "Flip board" }).click();

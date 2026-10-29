@@ -9,6 +9,7 @@ ESAI Day er en liten Flask-basert nettside med nedtelling til Enterprise Solutio
 - Valgfri pensjonsdato med en liten kommentar om mandagsalarmer.
 - En kort tekst om framtidens koding.
 - Sjakkoppgaver på `/chess`, med tre ferdighetsnivåer, hint og Stockfish som motspiller.
+- Forsidelenkene «Play» og «Work» åpner henholdsvis sjakk og SAP.
 
 Tidspunktet for AI Day defineres av `AI_DAY` i `app.py`. Serveren og nettleseren bruker samme frist: 5. november 2026 kl. 00:00 UTC. Etter fristen viser nedtellingen null og meldingen "AI DAY IS HERE".
 
@@ -26,19 +27,28 @@ Tidspunktet for AI Day defineres av `AI_DAY` i `app.py`. Serveren og nettleseren
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-npm ci
-npm run build
 flask --app app run
 ```
 
 Åpne deretter http://127.0.0.1:5000.
 
-Sjakkoppgavene ligger på http://127.0.0.1:5000/chess. Node.js 18 eller nyere
-trengs for å bygge sjakkfilene (Node.js 20 eller nyere for nettlesertestene).
-Bygget kopierer motor, sjakkregler og lisenser fra de låste npm-avhengighetene
-til `static/vendor/`. Ingen eksterne API-er eller CDN-er brukes under spilling.
+Sjakkoppgavene ligger på http://127.0.0.1:5000/chess. Ferdigbygde sjakkfiler
+og lisenser i `static/vendor/` er sjekket inn i Git, slik at både lokal kjøring
+og deploy fungerer uten Node.js eller et eget frontend-bygg.
+Ingen eksterne API-er eller CDN-er brukes under spilling.
 Nettleseren må støtte JavaScript, WebAssembly og Web Workers; motoren laster
 ned omtrent 7 MB ved første besøk.
+
+Ved oppdatering av sjakkavhengighetene brukes Node.js 18 eller nyere til å
+kopiere motor, sjakkregler og lisenser fra de låste npm-avhengighetene:
+
+```bash
+npm ci
+npm run build
+```
+
+Ta med de oppdaterte filene i `static/vendor/` i samme commit som
+avhengighetsendringen. Nettlesertestene krever Node.js 20 eller nyere.
 
 Samlingen har ti faste oppgaver: matt i ett for nybegynnere, matt i to for
 middels nivå og matt i tre for viderekomne. Velg en brikke og deretter et
@@ -59,18 +69,20 @@ Prosjektet har en `render.yaml`-fil for Render Blueprints. For å opprette tjene
 2. Opprett en Blueprint i Render og koble til repositoryet.
 3. Kontroller tjenesteinnstillingene fra `render.yaml`, og velg **Apply**.
 
-Render installerer Python-avhengighetene, kjører `npm ci && npm run build`
-og starter appen med `gunicorn app:app`. Node.js må være tilgjengelig i
-byggemiljøet. Ingen miljøvariabler er nødvendige for standardoppsettet.
+Render installerer Python-avhengighetene med `pip install -r requirements.txt`
+og starter appen med `gunicorn app:app`. Ingen miljøvariabler eller Node.js
+er nødvendige for standardoppsettet. Eksisterende tjenester kan beholde
+denne byggkommandoen; sjakkfilene følger med Git-repositoryet.
 
 ## Tester
 
 Regresjonstestene dekker startsiden, SAP-lenken, sjakksiden og sjakkmotoren.
 De bruker Pythons innebygde `unittest` og Node.js sin innebygde testkjører.
-Installer prosjektavhengighetene, bygg sjakkfilene og kjør:
+Installer prosjektavhengighetene og kjør:
 
 ```bash
 python -m unittest discover
+npm ci
 npm test
 ```
 
