@@ -1,5 +1,12 @@
 const { test, expect } = require("@playwright/test");
 
+async function seedUnseenPuzzles(page, allowedIds) {
+    const { puzzles } = await import("../static/chess-puzzles.mjs");
+    await page.addInitScript((history) => {
+        localStorage.setItem("esai-chess-seen-v1", JSON.stringify(history));
+    }, puzzles.filter((puzzle) => !allowedIds.includes(puzzle.id)).map((puzzle) => puzzle.id));
+}
+
 async function openPuzzle(page) {
     await page.goto("/chess");
     await expect(page.locator("#engine-status")).toHaveText("Stockfish ready");
@@ -46,6 +53,7 @@ test("Play and Work are prominent accessible buttons on desktop and mobile", asy
 });
 
 test("home navigation, keyboard solve, retry and flip", async ({ page }) => {
+    await seedUnseenPuzzles(page, ["scholar"]);
     await page.goto("/");
     await expect(page.getByRole("link", { name: "Work", exact: true })).toHaveAttribute("href", "/sap-s4");
     await page.getByRole("link", { name: "Play", exact: true }).click();
@@ -95,6 +103,7 @@ test("difficulty changes, engine replies, hints and complete solution", async ({
 });
 
 test("incorrect legal moves preserve the position and can be retried", async ({ page }) => {
+    await seedUnseenPuzzles(page, ["scholar", "fool", "back-rank", "close-support"]);
     await openPuzzle(page);
     for (let index = 0; index < 4; index++) {
         const title = await page.locator("#puzzle-title").textContent();
@@ -134,18 +143,20 @@ test("mobile board fits viewport and hints remain usable", async ({ page }) => {
     await expect(page.locator("#puzzle-feedback")).toContainText("Look at the piece");
 });
 
-test("all ten puzzles can be solved against the real browser engine", async ({ page }) => {
+test("all 90 puzzles can be solved against the real browser engine", async ({ page }) => {
+    test.setTimeout(180000);
     await openPuzzle(page);
     for (const [level, count, moves] of [
-        ["beginner", 4, 1], ["intermediate", 3, 2], ["advanced", 3, 3],
+        ["beginner", 30, 1], ["intermediate", 30, 2], ["advanced", 30, 3],
     ]) {
         if (level !== "beginner") await page.locator("#skill-level").selectOption(level);
         const titles = new Set();
         for (let index = 0; index < count; index++) {
-            titles.add(await page.locator("#puzzle-title").textContent());
+            const title = await page.locator("#puzzle-title").textContent();
+            titles.add(title);
             for (let move = 0; move < moves; move++) {
                 await hintMove(page);
-                await expect(page.locator("#puzzle-feedback")).toContainText(
+                await expect(page.locator("#puzzle-feedback"), `${level}: ${title}, move ${move + 1}`).toContainText(
                     move === moves - 1 ? "Checkmate!" : "Good move!",
                 );
             }
@@ -153,4 +164,52 @@ test("all ten puzzles can be solved against the real browser engine", async ({ p
         }
         expect(titles.size).toBe(count);
     }
+});
+
+test("puzzles do not repeat across reloads or skill changes", async ({ page }) => {
+    await openPuzzle(page);
+    const first = await page.locator("#puzzle-title").textContent();
+    await page.reload();
+    await expect(page.locator("#engine-status")).toHaveText("Stockfish ready");
+    const second = await page.locator("#puzzle-title").textContent();
+    expect(second).not.toBe(first);
+    await page.locator("#skill-level").selectOption("intermediate");
+    const intermediate = await page.locator("#puzzle-title").textContent();
+    await page.locator("#skill-level").selectOption("beginner");
+    expect([first, second]).not.toContain(await page.locator("#puzzle-title").textContent());
+    await page.locator("#skill-level").selectOption("intermediate");
+    await expect(page.locator("#puzzle-title")).not.toHaveText(intermediate);
+    const title = await page.locator("#puzzle-title").textContent();
+    await page.getByRole("button", { name: "Start over" }).click();
+    await expect(page.locator("#puzzle-title")).toHaveText(title);
+    await expect(page.locator("#puzzle-number")).toContainText("28 UNSEEN");
+});
+
+test("a completed collection announces the new round", async ({ page }) => {
+    await seedUnseenPuzzles(page, []);
+    await openPuzzle(page);
+    await expect(page.locator("#puzzle-feedback")).toContainText("You've seen every puzzle");
+    await expect(page.locator("#puzzle-number")).toContainText("29 UNSEEN");
+});
+
+test("unavailable browser storage warns but does not prevent puzzle solving", async ({ page }) => {
+    await page.addInitScript(() => {
+        Storage.prototype.setItem = () => { throw new Error("Storage blocked"); };
+    });
+    await openPuzzle(page);
+    await expect(page.locator("#history-notice")).toContainText("may repeat after a reload");
+    const title = await page.locator("#puzzle-title").textContent();
+    await page.getByRole("button", { name: "Next puzzle" }).click();
+    await expect(page.locator("#puzzle-title")).not.toHaveText(title);
+    await hintMove(page);
+    await expect(page.locator("#puzzle-feedback")).toContainText("Checkmate!");
+});
+
+test("corrupt saved history is reported and a fresh collection remains playable", async ({ page }) => {
+    await page.addInitScript(() => {
+        localStorage.setItem("esai-chess-seen-v1", '{"not": "an array"}');
+    });
+    await openPuzzle(page);
+    await expect(page.locator("#history-notice")).toBeVisible();
+    await expect(page.locator("#puzzle-number")).toContainText("29 UNSEEN");
 });

@@ -50,16 +50,32 @@ npm run build
 Ta med de oppdaterte filene i `static/vendor/` i samme commit som
 avhengighetsendringen. Nettlesertestene krever Node.js 20 eller nyere.
 
-Samlingen har ti faste oppgaver: matt i ett for nybegynnere, matt i to for
+Samlingen har 90 oppgaver, 30 per nivå: matt i ett for nybegynnere, matt i to for
 middels nivå og matt i tre for viderekomne. Velg en brikke og deretter et
 markert felt. Motoren godtar også alternative trekk som beholder tvungen matt
 innen oppgavens trekkgrense. Hint og løsninger teller ikke som løst alene.
-Fremdrift gjelder denne sidevisningen; det er ingen konto eller rating.
+Viste oppgaver lagres i nettleserens `localStorage`, separat per nivå. Ingen
+oppgave gjentas før alle på nivået er vist, også etter omlasting og nivåbytte.
+Deretter starter en ny runde uten å gjenta den siste oppgaven umiddelbart.
+«Start over» lar deg fortsatt øve på samme oppgave. Ved blokkert lagring vises
+en advarsel, og historikken beholdes bare under besøket. Løste oppgaver og
+streak gjelder fortsatt denne sidevisningen; det er ingen konto eller rating.
+
+De ti opprinnelige oppgavene er supplert med 80 komponerte sluttspill med
+varierte brikkekombinasjoner og begge farger. De ekstra stillingene i
+`static/chess-extra-puzzles.mjs` genereres uten nettverk med
+`node scripts/generate-chess-puzzles.mjs`. Generatoren forkaster speilinger,
+rotasjoner og fargebytter av samme stilling, og Stockfish verifiserer nøyaktig
+mattavstand og en fullstendig mattvariant før filen skrives. Generering er
+kun et vedlikeholdssteg; deploy og spilling krever ingen nye verktøy.
 
 Sjakkoden er delt i oppgavedata (`static/chess-puzzles.mjs`),
 motorprotokoll (`static/chess-engine.mjs`) og sideinteraksjon
-(`static/chess-page.mjs`). Hint og løsningsvisning bruker samme analysebuffer;
-oppstart og spilling bruker felles feilhåndtering. Navigasjonsknappene og
+(`static/chess-page.mjs`). Utvalgslogikken ligger i `static/chess-deck.mjs`.
+Hint og løsningsvisning bruker samme analysebuffer;
+oppstart og spilling bruker felles feilhåndtering. Motorens søkehistorikk
+nullstilles for hver stilling, og søket tillater dybde 40 innen samme tidsgrense
+på 1,8 sekunder for å finne korte mattlinjer mer pålitelig. Navigasjonsknappene og
 overskriftens olivengrønne farge styres av `--olive` i `static/style.css`.
 
 Stockfish.js distribueres uendret under GPL-3.0. Lisensen serveres sammen med

@@ -108,11 +108,13 @@ test("mate validation rejects slower mates, draws, and winning centipawn scores"
 
 test("engine parser ignores bound scores and handles multiline messages", async () => {
     let worker;
+    const commands = [];
     const fake = new StockfishEngine("fake", () => {
-        worker = { postMessage() {}, terminate() {} };
+        worker = { postMessage(command) { commands.push(command); }, terminate() {} };
         return worker;
     });
     const pending = fake.analyse(new Chess().fen());
+    assert.equal(commands[0], "ucinewgame", "each independent position must reset previous search history");
     worker.onmessage({ data: "info depth 10 score mate -2 pv a2a3 a7a6\ninfo depth 11 score cp -200 lowerbound pv a2a4\nbestmove a2a3" });
     assert.deepEqual(await pending, { bestMove: "a2a3", score: { type: "mate", value: -2 }, pv: ["a2a3", "a7a6"] });
     fake.close();

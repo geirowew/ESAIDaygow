@@ -52,7 +52,8 @@ export class StockfishEngine {
     analyse(fen) {
         let score = null;
         let pv = [];
-        return this.request([`position fen ${fen}`, "go depth 20 movetime 1800"], (line) => {
+        // Old search history can favor longer mating lines in unrelated positions.
+        return this.request(["ucinewgame", `position fen ${fen}`, "go depth 40 movetime 1800"], (line) => {
             if (line.startsWith("info ") && !line.includes("bound")) {
                 const match = line.match(/\bscore (mate|cp) (-?\d+)/);
                 if (match) {

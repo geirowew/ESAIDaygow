@@ -88,7 +88,10 @@ class HomepageTests(unittest.TestCase):
                     response.close()
 
     def test_chess_modules_are_served_as_javascript(self):
-        for filename in ("chess-page.mjs", "chess-engine.mjs", "chess-puzzles.mjs"):
+        for filename in (
+            "chess-page.mjs", "chess-engine.mjs", "chess-puzzles.mjs",
+            "chess-extra-puzzles.mjs", "chess-deck.mjs",
+        ):
             with self.subTest(filename=filename):
                 response = self.client.get(f"/static/{filename}")
                 try:

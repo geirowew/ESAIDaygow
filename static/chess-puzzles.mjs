@@ -1,3 +1,5 @@
+import { extraPuzzles } from "./chess-extra-puzzles.mjs";
+
 export const puzzles = [
     {
         id: "scholar", level: "beginner", title: "An early opportunity",
@@ -49,6 +51,7 @@ export const puzzles = [
         theme: "Endgame technique", moves: 3,
         fen: "7k/8/8/4K3/8/3Q4/8/8 w - - 0 1",
     },
+    ...extraPuzzles,
 ];
 
 export function isWinningContinuation(analysis, remainingMoves) {

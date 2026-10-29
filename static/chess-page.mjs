@@ -1,6 +1,7 @@
 import { Chess } from "./vendor/chess.js";
 import { StockfishEngine } from "./chess-engine.mjs";
 import { puzzles, isWinningContinuation, moveFromUci } from "./chess-puzzles.mjs";
+import { PuzzleDeck, historyKey } from "./chess-deck.mjs";
 
 const byId = (id) => document.getElementById(id);
 const board = byId("chess-board");
@@ -24,8 +25,22 @@ let movesUsed = 0;
 let hintCount = 0;
 let streak = 0;
 let analysis = null;
-let deck = [];
 const credited = new Set();
+let deck;
+
+function historyWarning(error) {
+    console.error("Could not save or restore puzzle history:", error);
+    const notice = byId("history-notice");
+    notice.hidden = false;
+    notice.textContent = "Puzzle history could not be saved or restored. New puzzles will still be shown during this visit, but may repeat after a reload.";
+}
+
+try {
+    deck = new PuzzleDeck(puzzles, JSON.parse(localStorage.getItem(historyKey) ?? "[]"));
+} catch (error) {
+    historyWarning(error);
+    deck = new PuzzleDeck(puzzles);
+}
 
 function message(text, tone = "") {
     feedback.textContent = text;
@@ -131,17 +146,14 @@ async function run(action) {
 }
 
 function startPuzzle(retry = false) {
+    let restarted = false;
     if (!retry) {
-        const previous = puzzle?.id;
-        if (!deck.length || deck[0].level !== skill.value) {
-            deck = puzzles.filter((item) => item.level === skill.value);
-            for (let index = deck.length - 1; index > 0; index--) {
-                const other = Math.floor(Math.random() * (index + 1));
-                [deck[index], deck[other]] = [deck[other], deck[index]];
-            }
-            if (deck[0].id === previous) deck.push(deck.shift());
+        ({ puzzle, restarted } = deck.next(skill.value));
+        try {
+            localStorage.setItem(historyKey, JSON.stringify(deck.history));
+        } catch (error) {
+            historyWarning(error);
         }
-        puzzle = deck.shift();
         assisted = false;
         if (!complete) streak = 0;
     }
@@ -158,11 +170,13 @@ function startPuzzle(retry = false) {
     byId("solution-line").hidden = true;
     byId("solution-line").textContent = "";
     const count = puzzles.filter((item) => item.level === skill.value).length;
-    byId("puzzle-number").textContent = `${skill.value.toUpperCase()} / ${count} PUZZLES IN THIS COLLECTION`;
+    byId("puzzle-number").textContent = `${skill.value.toUpperCase()} / ${count} PUZZLES / ${deck.remaining(skill.value)} UNSEEN`;
     byId("puzzle-title").textContent = puzzle.title;
     byId("puzzle-goal").textContent = `Find checkmate in ${puzzle.moves} ${puzzle.moves === 1 ? "move" : "moves"}. Stockfish plays the other side.`;
     byId("puzzle-theme").textContent = puzzle.theme;
-    message("Your move. Select a piece to see its legal moves.");
+    message(restarted
+        ? "You've seen every puzzle at this level. Starting a new round. Your move!"
+        : "Your move. Select a piece to see its legal moves.");
     render();
 }
 
