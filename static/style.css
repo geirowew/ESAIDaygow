@@ -95,7 +95,8 @@ a {
 }
 
 .topbar-button-play {
-    background: var(--green);
+    color: #fff;
+    background: #687c37;
 }
 
 .topbar-button-work {

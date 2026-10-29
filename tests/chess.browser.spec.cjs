@@ -20,7 +20,7 @@ test("Play and Work are prominent accessible buttons on desktop and mobile", asy
         await page.setViewportSize({ width, height: 900 });
         await page.goto("/");
         for (const [name, background, color, href] of [
-            ["Play", "rgb(215, 243, 106)", "rgb(23, 37, 31)", "/chess"],
+            ["Play", "rgb(104, 124, 55)", "rgb(255, 255, 255)", "/chess"],
             ["Work", "rgb(23, 37, 31)", "rgb(243, 242, 236)", "/sap-s4"],
         ]) {
             const link = page.getByRole("link", { name, exact: true });
