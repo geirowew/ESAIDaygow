@@ -50,6 +50,43 @@ class HomepageTests(unittest.TestCase):
                 self.assertIn(expected, response.data)
         self.assertNotIn(b"<iframe", response.data)
 
+    def test_chess_page_and_navigation(self):
+        response = self.client.get("/chess")
+        self.assertEqual(response.status_code, 200)
+        for expected in (
+            b'id="chess-board"',
+            b'id="skill-level"',
+            b'value="beginner"',
+            b'value="intermediate"',
+            b'value="advanced"',
+            b'Stockfish 17.1 Lite',
+            b'aria-live="polite"',
+            b'id="promotion-controls"',
+            b'/static/chess-page.mjs',
+            b'aria-current="page"',
+        ):
+            with self.subTest(expected=expected):
+                self.assertIn(expected, response.data)
+        for path in ("/", "/sap-s4"):
+            with self.subTest(path=path):
+                self.assertIn(b'href="/chess"', self.client.get(path).data)
+
+    def test_chess_engine_assets_are_served(self):
+        for filename, content_type in (
+            ("stockfish-17.1-lite-single-03e3232.js", "javascript"),
+            ("stockfish-17.1-lite-single-03e3232.wasm", "application/wasm"),
+            ("chess.js", "javascript"),
+            ("stockfish-LICENSE.txt", "text/plain"),
+            ("chess-LICENSE.txt", "text/plain"),
+        ):
+            with self.subTest(filename=filename):
+                response = self.client.get(f"/static/vendor/{filename}")
+                try:
+                    self.assertEqual(response.status_code, 200)
+                    self.assertIn(content_type, response.content_type)
+                finally:
+                    response.close()
+
     def test_countdown_uses_remaining_utc_time(self):
         cases = (
             (datetime(2026, 11, 3, 21, 56, 56, tzinfo=timezone.utc), (1, 2, 3, 4), False),

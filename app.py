@@ -28,5 +28,10 @@ def sap_production():
     return render_template("sap-production.html")
 
 
+@app.route("/chess")
+def chess_puzzles():
+    return render_template("chess.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

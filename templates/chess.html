@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Chess puzzles{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='chess.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="chess-page" aria-labelledby="chess-title">
+    <div class="chess-heading">
+        <div>
+            <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> A LITTLE PRACTICE. A SHARPER MIND.</p>
+            <h1 id="chess-title">Your next<br><span>best move.</span></h1>
+        </div>
+        <p>Find the tactic. Trust your instinct.<br>Build your chess skills, one puzzle at a time.</p>
+    </div>
+    <div class="chess-layout">
+        <div class="board-panel">
+            <div class="board-heading"><span id="side-to-move">Getting the board ready</span><button id="flip-board" type="button" disabled>Flip board</button></div>
+            <div id="chess-board" class="chess-board" role="group" aria-label="Chess puzzle board" aria-describedby="board-help"></div>
+            <p id="board-help" class="board-help">Select a piece, then a highlighted square. Keyboard: Tab to a square and press Enter or Space.</p>
+            <div id="promotion-controls" class="promotion-controls" hidden>
+                <label for="promotion">Promote pawn to</label>
+                <select id="promotion">
+                    <option value="q">Queen</option><option value="r">Rook</option>
+                    <option value="b">Bishop</option><option value="n">Knight</option>
+                </select>
+                <button id="confirm-promotion" type="button">Confirm promotion</button>
+                <button id="cancel-promotion" type="button">Cancel</button>
+            </div>
+        </div>
+        <aside class="puzzle-panel" aria-label="Puzzle controls">
+            <div class="puzzle-panel-heading"><span class="eyebrow">PUZZLE PRACTICE</span><span id="engine-status" class="engine-badge">Loading engine</span></div>
+            <label class="skill-label" for="skill-level">Choose your skill level</label>
+            <select id="skill-level" disabled>
+                <option value="beginner">Beginner - mate in 1</option>
+                <option value="intermediate">Intermediate - mate in 2</option>
+                <option value="advanced">Advanced - mate in 3</option>
+            </select>
+            <p class="skill-description">Difficulty changes the puzzles, not the strength of the opponent.</p>
+            <div class="puzzle-details">
+                <p id="puzzle-number" class="eyebrow">YOUR NEXT CHALLENGE</p>
+                <h2 id="puzzle-title">A moment to think.</h2>
+                <p id="puzzle-goal">Stockfish is warming up.</p>
+                <span id="puzzle-theme" class="puzzle-theme"></span>
+            </div>
+            <div id="puzzle-feedback" class="puzzle-feedback" role="status" aria-live="polite">Loading Stockfish. The first visit downloads a roughly 7 MB engine.</div>
+            <div class="puzzle-buttons">
+                <button id="next-puzzle" class="primary-button" type="button" disabled>Next puzzle</button>
+                <button id="retry-puzzle" type="button" disabled>Start over</button>
+                <button id="hint" type="button" disabled>Get a hint</button>
+                <button id="show-solution" type="button" disabled>Show solution</button>
+            </div>
+            <div class="session-stats" aria-label="Session progress">
+                <div><strong id="solved-count">0</strong><span>SOLVED SOLO</span></div>
+                <div><strong id="streak-count">0</strong><span>CURRENT STREAK</span></div>
+            </div>
+            <div class="move-history"><h3>Your line</h3><ol id="move-list" aria-label="Moves played"></ol><p id="solution-line" hidden></p></div>
+            <p class="engine-credit">Powered by <a href="https://github.com/nmrugg/stockfish.js/tree/602fd7e1a571a2be71f242942db90483731f2a1f" target="_blank" rel="noopener noreferrer">Stockfish 17.1 Lite</a>, running on your device.
+                <a href="{{ url_for('static', filename='vendor/stockfish-LICENSE.txt') }}">GPL-3.0</a> &middot;
+                <a href="https://github.com/nmrugg/stockfish.js/archive/602fd7e1a571a2be71f242942db90483731f2a1f.tar.gz">Engine source</a>.
+                Board rules: chess.js (<a href="{{ url_for('static', filename='vendor/chess-LICENSE.txt') }}">BSD-2-Clause</a>).
+                A small practice collection, not a rated puzzle service.</p>
+        </aside>
+    </div>
+    <noscript><p class="puzzle-feedback">Chess puzzles require JavaScript and a browser with WebAssembly support.</p></noscript>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+    import({{ url_for('static', filename='chess-page.mjs') | tojson }}).catch((error) => {
+        console.error("Could not load chess puzzles:", error);
+        document.getElementById("engine-status").textContent = "Unavailable";
+        document.getElementById("puzzle-feedback").textContent = "Chess assets could not load. Reload to retry. For local setup, run npm ci and npm run build.";
+    });
+</script>
+{% endblock %}

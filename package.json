@@ -1,0 +1,16 @@
+{
+  "name": "esai-daygow",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-chess-assets.cjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test"
+  },
+  "dependencies": {
+    "chess.js": "1.4.0",
+    "stockfish": "17.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
