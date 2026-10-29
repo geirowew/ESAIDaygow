@@ -81,6 +81,47 @@ a {
     outline-offset: 4px;
 }
 
+.topbar-button {
+    min-width: 104px;
+    min-height: 48px;
+    justify-content: center;
+    padding: 12px 22px;
+    border: 1px solid var(--ink);
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 3px 0 var(--ink);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.topbar-button-play {
+    background: var(--green);
+}
+
+.topbar-button-work {
+    color: var(--paper);
+    background: var(--ink);
+}
+
+.topbar-button-work .topbar-sap-arrow {
+    color: var(--green);
+}
+
+.topbar-button:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 var(--ink);
+}
+
+.topbar-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--ink);
+}
+
+.topbar-button:focus-visible {
+    outline-width: 3px;
+}
+
 .wordmark {
     display: inline-flex;
     align-items: center;
@@ -506,6 +547,23 @@ h1 span {
 
     .topbar-sap-link img {
         width: 32px;
+    }
+
+    .topbar-actions-home {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 8px 0;
+    }
+
+    .topbar-actions-home .topbar-date {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .topbar-actions-home .topbar-button {
+        flex: 1;
+        font-size: 15px;
     }
 
     .overview-screen {

@@ -15,6 +15,32 @@ async function hintMove(page) {
     await page.locator(`[data-square="${to}"]`).click();
 }
 
+test("Play and Work are prominent accessible buttons on desktop and mobile", async ({ page }) => {
+    for (const width of [1440, 900, 390, 320]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto("/");
+        for (const [name, background, color, href] of [
+            ["Play", "rgb(215, 243, 106)", "rgb(23, 37, 31)", "/chess"],
+            ["Work", "rgb(23, 37, 31)", "rgb(243, 242, 236)", "/sap-s4"],
+        ]) {
+            const link = page.getByRole("link", { name, exact: true });
+            await expect(link).toHaveAttribute("href", href);
+            await expect(link).toHaveCSS("background-color", background);
+            await expect(link).toHaveCSS("color", color);
+            await expect(link).toHaveCSS("font-size", "15px");
+            const bounds = await link.boundingBox();
+            expect(bounds.height).toBeGreaterThanOrEqual(48);
+            expect(bounds.width).toBeGreaterThanOrEqual(104);
+            expect(bounds.x).toBeGreaterThanOrEqual(0);
+            expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+            await link.focus();
+            await expect(link).toHaveCSS("outline-style", "solid");
+            await expect(link).toHaveCSS("outline-width", "3px");
+        }
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    }
+});
+
 test("home navigation, keyboard solve, retry and flip", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("link", { name: "Work", exact: true })).toHaveAttribute("href", "/sap-s4");
