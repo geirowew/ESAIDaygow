@@ -74,24 +74,29 @@ class TimeCaptureTests(unittest.TestCase):
         self.assertEqual(response.headers["Cache-Control"], "no-store")
         self.assertEqual(get.call_count, 4)
         query = get.call_args_list[2].kwargs["params"]
-        self.assertEqual(query["jql"], 'issuetype = Story AND cf[10001] = "team-16" ORDER BY key ASC')
+        self.assertEqual(
+            query["jql"],
+            'issuetype = Story AND cf[10001] = "team-16" '
+            'AND (cf[10002] IS NOT EMPTY OR cf[10003] IS NOT EMPTY) ORDER BY key ASC',
+        )
         self.assertEqual(query["fields"], "summary,status,customfield_10002,customfield_10003")
         self.assertEqual(get.call_args_list[3].kwargs["params"]["nextPageToken"], "next")
         for expected in (b"2000009485", b"CHG0368513", b"2000009486", b"CHG0000001",
-                         b"Not set", b"NGE-4", b"Done", b"Story &lt;summary&gt;",
+                         b"Not set", b"NGE-2", b"NGE-3", b"Done", b"Story &lt;summary&gt;",
                          b'href="https://example.atlassian.net/browse/NGE-1"',
-                         b'<span class="jira-count">4</span>'):
+                         b'<span class="jira-count">3</span>'):
             self.assertIn(expected, response.data)
+        self.assertNotIn(b"NGE-4", response.data)
         self.assertNotIn(b"<summary>", response.data)
 
     def test_report_does_not_stop_at_500_stories(self):
         self.login()
         pages = [
-            {"issues": [story(f"NGE-{page * 100 + index}") for index in range(100)],
+            {"issues": [story(f"NGE-{page * 100 + index}", "2000009485") for index in range(100)],
              "nextPageToken": f"page-{page + 1}", "isLast": False}
             for page in range(5)
         ]
-        pages.append({"issues": [story("NGE-500")], "isLast": True})
+        pages.append({"issues": [story("NGE-500", snow="CHG0368513")], "isLast": True})
         with patch("app.requests.get", side_effect=self.responses(*pages)) as get:
             response = self.client.get("/work/time-capture")
         self.assertEqual(get.call_count, 8)
@@ -116,6 +121,20 @@ class TimeCaptureTests(unittest.TestCase):
             response = self.client.get("/work/time-capture")
         self.assertIn(b"00123, 00456", response.data)
         self.assertIn(b"CHG01", response.data)
+
+    def test_blank_ids_are_excluded_and_count_is_zero(self):
+        self.login()
+        issues = [
+            story("NGE-EMPTY"),
+            story("NGE-BLANK", "", "  "),
+            story("NGE-LIST", [None, "", " "], []),
+            story("NGE-OPTION", {"value": " "}),
+        ]
+        with patch("app.requests.get", side_effect=self.responses({"issues": issues, "isLast": True})):
+            response = self.client.get("/work/time-capture")
+        self.assertIn(b'<span class="jira-count">0</span>', response.data)
+        self.assertIn(b"with a ChaRM ID or SNOW ID.", response.data)
+        self.assertNotIn(b"<table", response.data)
 
     def test_unsupported_id_value_shows_error_instead_of_empty_id(self):
         self.login()

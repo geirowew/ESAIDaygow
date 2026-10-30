@@ -17,7 +17,7 @@
             </form>
         </div>
     </div>
-    <p>All stories whose Team is 16 - Time Capture, across all assignees and statuses, including completed stories. Only issues visible to the configured Jira account can be listed.</p>
+    <p>Stories whose Team is 16 - Time Capture with a ChaRM ID, a SNOW ID, or both, across all assignees and statuses, including completed stories. Only issues visible to the configured Jira account can be listed.</p>
     {% if not jira.configured %}
     <div class="jira-note" role="status">
         <p class="jira-note-title">Jira is not connected yet.</p>
@@ -29,7 +29,7 @@
         <p>{{ jira.error }}</p>
     </div>
     {% elif not jira.tasks %}
-    <p class="jira-note" role="status">No stories found for Team 16 - Time Capture.</p>
+    <p class="jira-note" role="status">No stories found for Team 16 - Time Capture with a ChaRM ID or SNOW ID.</p>
     {% else %}
     <div class="jira-table-scroll" role="region" aria-label="Team 16 story IDs" tabindex="0">
         <table class="jira-id-table">

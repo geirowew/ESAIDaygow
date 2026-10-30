@@ -71,7 +71,8 @@ Etter innlogging finnes «Team 16 IDs» under Work. Rapporten på
 `/work/time-capture` viser Story-saker med **Team = 16 - Time Capture**,
 uavhengig av komponent, ansvarlig og status (også ferdige saker).
 Hver rad viser Jira-lenke, sammendrag, status, ChaRM ID og SNOW ID.
-Tomme ID-felt vises som «Not set»; også saker uten ID-er er med.
+Bare saker med ChaRM ID, SNOW ID eller begge er med. Et tomt ID-felt vises
+som «Not set» når det andre feltet har en verdi.
 
 Feltene oppdages fra Jira-feltdefinisjonene. Team-ID-en verifiseres mot Team
 på referansesaken `NGE-136646`; hvis denne saken ikke er tilgjengelig eller

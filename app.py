@@ -88,11 +88,12 @@ def jira_id_text(value):
     if value is None or value == "":
         return "Not set"
     if isinstance(value, (str, int)) and not isinstance(value, bool):
-        return str(value)
+        return str(value).strip() or "Not set"
     if isinstance(value, list):
-        return ", ".join(jira_id_text(item) for item in value) or "Not set"
+        values = [jira_id_text(item) for item in value]
+        return ", ".join(item for item in values if item != "Not set") or "Not set"
     if isinstance(value, dict) and isinstance(value.get("value"), (str, int)):
-        return str(value["value"])
+        return str(value["value"]).strip() or "Not set"
     raise JiraError("Jira returned an unsupported ChaRM ID or SNOW ID value.")
 
 
@@ -118,7 +119,14 @@ def fetch_time_capture_stories():
         if not field_number.isdigit():
             raise JiraError("Jira returned an invalid Team field ID.")
         escaped_id = team_id.replace("\\", "\\\\").replace('"', '\\"')
-        result["jql"] = f'issuetype = Story AND cf[{field_number}] = "{escaped_id}" ORDER BY key ASC'
+        id_fields = [fields[label].removeprefix("customfield_") for label in ("ChaRM ID", "SNOW ID")]
+        if not all(number.isdigit() for number in id_fields):
+            raise JiraError("Jira returned invalid ChaRM ID or SNOW ID field IDs.")
+        result["jql"] = (
+            f'issuetype = Story AND cf[{field_number}] = "{escaped_id}" '
+            f'AND (cf[{id_fields[0]}] IS NOT EMPTY OR cf[{id_fields[1]}] IS NOT EMPTY) '
+            'ORDER BY key ASC'
+        )
         issues = search_jira_issues(
             result["jql"], ("summary", "status", fields["ChaRM ID"], fields["SNOW ID"]), credentials
         )
@@ -128,7 +136,8 @@ def fetch_time_capture_stories():
             values = issue.get("fields") or {}
             task["charm_id"] = jira_id_text(values.get(fields["ChaRM ID"]))
             task["snow_id"] = jira_id_text(values.get(fields["SNOW ID"]))
-            tasks.append(task)
+            if task["charm_id"] != "Not set" or task["snow_id"] != "Not set":
+                tasks.append(task)
         result["tasks"] = tasks
     except JiraError as error:
         result["error"] = str(error)
