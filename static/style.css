@@ -418,14 +418,18 @@ h1 span {
     padding: 0 20px;
     align-items: center;
     gap: 20px;
-    color: var(--ink);
-    background: var(--green);
+    color: #fff;
+    background: var(--olive);
     font-size: 15px;
     font-weight: 600;
 }
 
 .production-link span {
-    color: var(--orange);
+    color: var(--green);
+}
+
+.production-link:hover {
+    background: var(--ink);
 }
 
 .production-link:focus-visible {
@@ -506,9 +510,9 @@ h1 span {
     align-items: center;
     gap: 10px;
     padding: 10px 14px;
-    color: var(--ink);
-    background: transparent;
-    border: 1px solid var(--ink);
+    color: #fff;
+    background: var(--olive);
+    border: 1px solid var(--olive);
     font-family: var(--display);
     font-size: 13px;
     font-weight: 600;
@@ -516,13 +520,8 @@ h1 span {
     cursor: pointer;
 }
 
-.jira-logout {
-    color: var(--muted);
-    border-color: var(--line);
-}
-
 .jira-open span {
-    color: var(--orange);
+    color: var(--green);
 }
 
 .jira-open:hover,
