@@ -65,6 +65,22 @@ Feil fra Jira (nettverk, ugyldig token) vises som en melding uten at siden
 feiler. Hver oppgave lenker til saken i Jira, og «Open in Jira» åpner samme
 søk der.
 
+### Team 16 - Time Capture: ChaRM- og SNOW-ID
+
+Etter innlogging finnes «Team 16 IDs» under Work. Rapporten på
+`/work/time-capture` viser Story-saker med **Team = 16 - Time Capture**,
+uavhengig av komponent, ansvarlig og status (også ferdige saker).
+Hver rad viser Jira-lenke, sammendrag, status, ChaRM ID og SNOW ID.
+Tomme ID-felt vises som «Not set»; også saker uten ID-er er med.
+
+Feltene oppdages fra Jira-feltdefinisjonene. Team-ID-en verifiseres mot Team
+på referansesaken `NGE-136646`; hvis denne saken ikke er tilgjengelig eller
+ikke lenger tilhører Team 16, vises en feil i stedet for et feilaktig utvalg.
+Feltnavnene Team, ChaRM ID og SNOW ID må være entydige (store/små bokstaver
+og mellomrom ignoreres). Rapporten følger alle resultatsider uten
+500-sakersgrensen fra «My tasks», og viser bare saker API-kontoen har tilgang til.
+Ingen Jira-data hentes før innlogging, og rapporten sendes med `Cache-Control: no-store`.
+
 Sjakkoppgavene ligger på http://127.0.0.1:5000/chess. Ferdigbygde sjakkfiler
 og lisenser i `static/vendor/` er sjekket inn i Git, slik at både lokal kjøring
 og deploy fungerer uten Node.js eller et eget frontend-bygg.

@@ -496,8 +496,38 @@ h1 span {
 
 .jira-tools {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+}
+
+.jira-table-scroll {
+    overflow-x: auto;
+}
+
+.jira-id-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.jira-id-table caption {
+    padding: 12px 0;
+    text-align: left;
+    color: var(--muted);
+}
+
+.jira-id-table th,
+.jira-id-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+}
+
+.jira-id-table td:nth-last-child(-n+2) {
+    font-family: var(--mono);
+    white-space: nowrap;
 }
 
 .jira-tools form {

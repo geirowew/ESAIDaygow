@@ -26,6 +26,7 @@
         <h2 id="jira-title">My tasks{% if work.authenticated and jira.configured and not jira.error %} <span class="jira-count">{{ jira.tasks | length }}</span>{% endif %}</h2>
         {% if work.authenticated %}
         <div class="jira-tools">
+            <a class="jira-open" href="{{ url_for('time_capture') }}">Team 16 IDs</a>
             <a class="jira-open" href="{{ jira.url }}/issues/?jql={{ jira.jql | urlencode }}" target="_blank" rel="noopener noreferrer">
                 Open in Jira <span aria-hidden="true">↗</span>
             </a>

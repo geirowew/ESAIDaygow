@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Team 16 - Time Capture{% endblock %}
+
+{% block content %}
+<section class="jira-section" aria-labelledby="team-title">
+    <div class="jira-heading">
+        <p class="eyebrow">WORK / TEAM 16 - TIME CAPTURE</p>
+        <h2 id="team-title">Story change IDs{% if jira.configured and not jira.error %} <span class="jira-count">{{ jira.tasks | length }}</span>{% endif %}</h2>
+        <div class="jira-tools">
+            <a class="jira-open" href="{{ url_for('sap_production') }}">Back to Work</a>
+            {% if jira.jql and not jira.error %}
+            <a class="jira-open" href="{{ jira.url }}/issues/?jql={{ jira.jql | urlencode }}" target="_blank" rel="noopener noreferrer">Open in Jira</a>
+            {% endif %}
+            <form method="post" action="{{ url_for('work_logout') }}">
+                <button class="jira-logout" type="submit">Log out</button>
+            </form>
+        </div>
+    </div>
+    <p>All stories whose Team is 16 - Time Capture, across all assignees and statuses, including completed stories. Only issues visible to the configured Jira account can be listed.</p>
+    {% if not jira.configured %}
+    <div class="jira-note" role="status">
+        <p class="jira-note-title">Jira is not connected yet.</p>
+        <p>Set JIRA_EMAIL and JIRA_API_TOKEN on the server to load this report.</p>
+    </div>
+    {% elif jira.error %}
+    <div class="jira-note jira-note-error" role="alert">
+        <p class="jira-note-title">Could not load the Team 16 report.</p>
+        <p>{{ jira.error }}</p>
+    </div>
+    {% elif not jira.tasks %}
+    <p class="jira-note" role="status">No stories found for Team 16 - Time Capture.</p>
+    {% else %}
+    <div class="jira-table-scroll" role="region" aria-label="Team 16 story IDs" tabindex="0">
+        <table class="jira-id-table">
+            <caption>ChaRM and ServiceNow IDs recorded on each Jira story. Not set means the field is empty.</caption>
+            <thead>
+                <tr><th scope="col">Story</th><th scope="col">Summary</th><th scope="col">Status</th><th scope="col">ChaRM ID</th><th scope="col">SNOW ID</th></tr>
+            </thead>
+            <tbody>
+                {% for task in jira.tasks %}
+                <tr>
+                    <th scope="row"><a class="jira-key" href="{{ task.url }}" target="_blank" rel="noopener noreferrer">{{ task.key }}</a></th>
+                    <td>{{ task.summary }}</td><td>{{ task.status }}</td><td>{{ task.charm_id }}</td><td>{{ task.snow_id }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
