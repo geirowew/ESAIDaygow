@@ -5,3 +5,14 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     healthCheckPath: /
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WORK_PASSWORD
+        sync: false
+      - key: JIRA_BASE_URL
+        value: https://eqn-nextgen.atlassian.net
+      - key: JIRA_EMAIL
+        sync: false
+      - key: JIRA_API_TOKEN
+        sync: false

@@ -19,4 +19,74 @@
         <a class="production-back" href="{{ url_for('home') }}">← Back to countdown</a>
     </div>
 </section>
+
+<section class="jira-section" aria-labelledby="jira-title">
+    <div class="jira-heading">
+        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> JIRA · ASSIGNED TO ME</p>
+        <h2 id="jira-title">My tasks{% if work.authenticated and jira.configured and not jira.error %} <span class="jira-count">{{ jira.tasks | length }}</span>{% endif %}</h2>
+        {% if work.authenticated %}
+        <div class="jira-tools">
+            <a class="jira-open" href="{{ jira.url }}/issues/?jql={{ jira.jql | urlencode }}" target="_blank" rel="noopener noreferrer">
+                Open in Jira <span aria-hidden="true">↗</span>
+            </a>
+            <form method="post" action="{{ url_for('work_logout') }}">
+                <button class="jira-logout" type="submit">Log out</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if not work.login_enabled %}
+    <div class="jira-note" role="status">
+        <p class="jira-note-title">Login is not configured.</p>
+        <p>Set <code>WORK_PASSWORD</code> (and a stable <code>SECRET_KEY</code>) as environment variables to protect and unlock the Jira task list.</p>
+    </div>
+    {% elif not work.authenticated %}
+    <form class="jira-note jira-login" method="post" action="{{ url_for('work_login') }}">
+        <p class="jira-note-title">Log in to see your Jira tasks.</p>
+        <p>The task list is private. Enter the work password to continue.</p>
+        {% if work.login_error %}<p class="jira-login-error" role="alert">Wrong password. Try again.</p>{% endif %}
+        <div class="jira-login-row">
+            <label class="visually-hidden" for="work-password">Password</label>
+            <input id="work-password" name="password" type="password" required autocomplete="current-password" autofocus>
+            <button type="submit">Log in</button>
+        </div>
+    </form>
+    {% elif not jira.configured %}
+    <div class="jira-note" role="status">
+        <p class="jira-note-title">Jira is not connected yet.</p>
+        <p>Set <code>JIRA_EMAIL</code> and <code>JIRA_API_TOKEN</code> as environment variables (locally and in Render). Create a token under
+            <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noopener noreferrer">Atlassian account → Security → API tokens</a>.
+            The site uses <code>{{ jira.url }}</code>; override with <code>JIRA_BASE_URL</code> if needed.</p>
+    </div>
+    {% elif jira.error %}
+    <div class="jira-note jira-note-error" role="alert">
+        <p class="jira-note-title">Could not load tasks.</p>
+        <p>{{ jira.error }}</p>
+    </div>
+    {% elif not jira.tasks %}
+    <div class="jira-note" role="status">
+        <p class="jira-note-title">No open tasks assigned to you.</p>
+        <p>Enjoy the quiet — or go solve a chess puzzle.</p>
+    </div>
+    {% else %}
+    <ul class="jira-list">
+        {% for task in jira.tasks %}
+        <li class="jira-item jira-status-{{ task.status_category }}">
+            <a class="jira-key" href="{{ task.url }}" target="_blank" rel="noopener noreferrer">{{ task.key }}</a>
+            <div class="jira-body">
+                <a class="jira-summary" href="{{ task.url }}" target="_blank" rel="noopener noreferrer">{{ task.summary }}</a>
+                <div class="jira-meta">
+                    <span>{{ task.type }}</span>
+                    {% if task.priority %}<span>{{ task.priority }}</span>{% endif %}
+                    {% if task.due %}<span class="jira-due">Due {{ task.due }}</span>{% endif %}
+                    {% if task.updated %}<span>Updated {{ task.updated }}</span>{% endif %}
+                </div>
+            </div>
+            <span class="jira-status">{{ task.status }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</section>
 {% endblock %}

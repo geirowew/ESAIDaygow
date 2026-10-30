@@ -10,6 +10,7 @@ ESAI Day er en liten Flask-basert nettside med nedtelling til Enterprise Solutio
 - En kort tekst om framtidens koding.
 - Sjakkoppgaver på `/chess`, med tre ferdighetsnivåer, hint og Stockfish som motspiller.
 - Forsidelenkene «Play» og «Work» åpner henholdsvis sjakk og SAP.
+- Work-siden (`/sap-s4`) lister uløste Jira-oppgaver som er tildelt deg, hentet fra Jira Cloud. Listen er beskyttet med et passord.
 
 Tidspunktet for AI Day defineres av `AI_DAY` i `app.py`. Serveren og nettleseren bruker samme frist: 5. november 2026 kl. 00:00 UTC. Etter fristen viser nedtellingen null og meldingen "AI DAY IS HERE".
 
@@ -31,6 +32,38 @@ flask --app app run
 ```
 
 Åpne deretter http://127.0.0.1:5000.
+
+### Jira-oppgaver på Work-siden
+
+Work-siden henter oppgaver fra Jira Cloud på serversiden med JQL
+`assignee = currentUser() AND resolution = Unresolved`. Innloggingen mot Jira
+skjer med e-post og et personlig API-token (fungerer også for kontoer med SSO).
+Siden Jira-tokenet tilhører én konto, vises listen først etter innlogging med
+et eget passord på Work-siden. Innloggingen lagres i en signert sesjons-cookie
+som utløper når nettleseren lukkes; «Log out» avslutter den tidligere.
+Alle hemmeligheter leses bare fra miljøvariabler og må aldri sjekkes inn:
+
+| Variabel | Beskrivelse |
+| --- | --- |
+| `WORK_PASSWORD` | Passordet som låser opp Jira-listen. Uten denne vises ingen innlogging |
+| `SECRET_KEY` | Signerer sesjons-cookien. Uten en fast verdi glemmes innlogginger ved omstart |
+| `JIRA_EMAIL` | E-postadressen til Atlassian-kontoen din |
+| `JIRA_API_TOKEN` | Token fra https://id.atlassian.com/manage-profile/security/api-tokens |
+| `JIRA_BASE_URL` | Valgfri. Standard er `https://eqn-nextgen.atlassian.net` |
+
+```bash
+export WORK_PASSWORD="velg-et-passord"
+export SECRET_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+export JIRA_EMAIL="deg@equinor.com"
+export JIRA_API_TOKEN="..."
+flask --app app run
+```
+
+Uten `WORK_PASSWORD` viser siden at innlogging ikke er satt opp. Etter innlogging
+uten Jira-variablene vises en kort oppsettsveiledning i stedet for listen.
+Feil fra Jira (nettverk, ugyldig token) vises som en melding uten at siden
+feiler. Hver oppgave lenker til saken i Jira, og «Open in Jira» åpner samme
+søk der.
 
 Sjakkoppgavene ligger på http://127.0.0.1:5000/chess. Ferdigbygde sjakkfiler
 og lisenser i `static/vendor/` er sjekket inn i Git, slik at både lokal kjøring
@@ -92,13 +125,17 @@ Prosjektet har en `render.yaml`-fil for Render Blueprints. For å opprette tjene
 3. Kontroller tjenesteinnstillingene fra `render.yaml`, og velg **Apply**.
 
 Render installerer Python-avhengighetene med `pip install -r requirements.txt`
-og starter appen med `gunicorn app:app`. Ingen miljøvariabler eller Node.js
-er nødvendige for standardoppsettet. Eksisterende tjenester kan beholde
-denne byggkommandoen; sjakkfilene følger med Git-repositoryet.
+og starter appen med `gunicorn app:app`. Sett `WORK_PASSWORD`, `JIRA_EMAIL` og
+`JIRA_API_TOKEN` som hemmelige miljøvariabler i Render for å vise Jira-oppgavene;
+`render.yaml` ber om dem ved oppsett og genererer `SECRET_KEY` automatisk.
+Node.js er ikke nødvendig for standardoppsettet.
+Eksisterende tjenester kan beholde denne byggkommandoen; sjakkfilene følger
+med Git-repositoryet.
 
 ## Tester
 
-Regresjonstestene dekker startsiden, SAP-lenken, sjakksiden og sjakkmotoren.
+Regresjonstestene dekker startsiden, SAP-lenken, passordinnloggingen og
+Jira-listen (med mocket Jira-API), sjakksiden og sjakkmotoren.
 De bruker Pythons innebygde `unittest` og Node.js sin innebygde testkjører.
 Installer prosjektavhengighetene og kjør:
 
