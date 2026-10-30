@@ -14,7 +14,7 @@ AI_DAY = datetime(2026, 11, 5, tzinfo=timezone.utc)
 WORK_SESSION_KEY = "work_authenticated"
 JIRA_DEFAULT_URL = "https://eqn-nextgen.atlassian.net"
 JIRA_JQL = "assignee = currentUser() AND resolution = Unresolved ORDER BY updated DESC"
-JIRA_FIELDS = ("summary", "status", "priority", "issuetype", "project", "duedate", "updated")
+JIRA_FIELDS = ("summary", "status", "priority", "issuetype", "duedate", "updated")
 JIRA_PAGE_SIZE = 100
 JIRA_MAX_ISSUES = 500
 JIRA_TIMEOUT = 10
@@ -59,7 +59,6 @@ def parse_jira_issue(issue, base_url):
         "status_category": category,
         "type": (fields.get("issuetype") or {}).get("name") or "Task",
         "priority": (fields.get("priority") or {}).get("name"),
-        "project": (fields.get("project") or {}).get("key"),
         "due": format_jira_date(fields.get("duedate"), "%b %d"),
         "updated": format_jira_date(fields.get("updated"), "%b %d, %H:%M"),
     }
