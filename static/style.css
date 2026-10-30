@@ -585,9 +585,9 @@ h1 span {
 .jira-login button {
     min-height: 44px;
     padding: 0 20px;
-    color: var(--ink);
-    background: var(--green);
-    border: 1px solid var(--ink);
+    color: #fff;
+    background: var(--olive);
+    border: 1px solid var(--olive);
     font-family: var(--display);
     font-size: 14px;
     font-weight: 600;
@@ -597,6 +597,7 @@ h1 span {
 .jira-login button:hover {
     color: var(--paper);
     background: var(--ink);
+    border-color: var(--ink);
 }
 
 .jira-note {

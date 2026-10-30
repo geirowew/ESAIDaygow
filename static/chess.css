@@ -42,7 +42,7 @@
 .puzzle-feedback[data-tone="error"] { border-color: #b34529; background: #fae9e2; }
 .puzzle-feedback[data-tone="success"] { border-color: #597b2b; background: #e8f4cd; }
 .puzzle-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 16px; }
-.chess-page .primary-button { background: var(--green); border-color: #bfd65e; font-weight: 600; }
+.chess-page .primary-button { color: #fff; background: var(--olive); border-color: var(--olive); font-weight: 600; }
 .session-stats { display: flex; gap: 40px; margin: 24px 0 20px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .session-stats div { display: grid; gap: 6px; }
 .session-stats strong { font-size: 26px; font-weight: 500; }
